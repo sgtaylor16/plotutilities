@@ -17,7 +17,8 @@ function burndownPlot(jsonarray,datekey,divname){
 
     let plot  = Plot.plot({
         marks:[
-            Plot.line(jsonarray,{x:datekey,y:'total',curve:'step-after'})
+            Plot.line(jsonarray,{x:datekey,y:'total',curve:'step-after'}),
+            Plot.gridY({interval:1})
         ]
     })
 
