@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Burndown</h1>
+    <div id="burndown"></div>
+</body>
+<script type="module">
+    import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+    import {burndownPlot} from './tools.js';
+
+    async function main() {
+        const data = await d3.csv('data.csv');
+        data.forEach(d => {
+            d.date = new Date(d.date);
+        });
+        console.log(data)
+
+        burndownPlot(data,'date','burndown');
+
+    }
+    main()
+
+</script>
+</html>
