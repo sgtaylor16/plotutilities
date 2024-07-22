@@ -8,17 +8,18 @@ function burndownPlot(jsonarray,datekey,divname){
         return value instanceof Date || Object.prototype.toString.call(value) === '[object Date]';
       }
 
-    function convertToDate(value){
-        if(value == null){
-            return null
-        }else if(isDate(value)){
-            return value
+    function convertToDate(object,datekey){
+        if(object[datekey] == null){
+            
+        }else if(isDate(object[datekey])){
+
         }else{
-            return new Date(value)
+            object[datekey] = new Date(value)
         }
+        return object
     }
 
-    jsonarray.map( d => (convertToDate(d[datekey])))
+    jsonarray = jsonarray.map(convertToDate)
         
     //make sure array is sorted
     jsonarray.sort((a,b)=>a[datekey]-b[datekey]);
