@@ -3,6 +3,23 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 
 function burndownPlot(jsonarray,datekey,divname){
+
+    function isDate(value) {
+        return value instanceof Date || Object.prototype.toString.call(value) === '[object Date]';
+      }
+
+    function convertToDate(value){
+        if(value == null){
+            return null
+        }else if(isDate(value)){
+            return value
+        }else{
+            return new Date(value)
+        }
+    }
+
+    jsonarray.map( d => (convertToDate(d[datekey])))
+        
     //make sure array is sorted
     jsonarray.sort((a,b)=>a[datekey]-b[datekey]);
     //add total field
