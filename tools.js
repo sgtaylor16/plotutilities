@@ -4,25 +4,20 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 function burndownPlot(jsonarray,datekey,divname){
 
-    function isDate(value) {
-        return value instanceof Date || Object.prototype.toString.call(value) === '[object Date]';
-      }
-
-    function convertToDate(object,datekey){
-        if(object[datekey] == null){
-            
-        }else if(isDate(object[datekey])){
-
-        }else{
-            object[datekey] = new Date(value)
-        }
-        return object
+    function convertToDate(obj){
+        obj[datekey] = new Date(obj[datekey]);
+        return obj;
     }
 
-    jsonarray = jsonarray.map(convertToDate)
-        
-    //make sure array is sorted
-    jsonarray.sort((a,b)=>a[datekey]-b[datekey]);
+    jsonarray = jsonarray.map(d => convertToDate(d))
+
+    jsonarray.sort((a,b) => {
+        if(!isNaN(a[datekey]) && !isNaN(b[datekey])) return 0;
+        if(isNaN(a[datekey]) && !isNaN(b[datekey])) return 1; // b is null, a comes first 
+        if(isNaN(b[datekey]) && !isNaN(a[datekey])) return -1; // a is null, b comes first
+        return a[datekey] - b[datekey];
+    })
+
     //add total field
     const totalnumber = jsonarray.length;
     for(let i=0;i<totalnumber;i++){
@@ -39,7 +34,6 @@ function burndownPlot(jsonarray,datekey,divname){
             Plot.gridY({interval:1})
         ]
     })
-
     let div = document.getElementById(divname);
     div.append(plot);
 
