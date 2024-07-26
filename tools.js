@@ -4,23 +4,33 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 function burndownPlot(jsonarray,datekey,divname){
 
+    const totalnumber = jsonarray.length;
+
+    function isDateLike(str) {
+        // Regular expression to match common date formats
+        const datePattern = /^(?:\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4})$/;
+        // Test the string against the regex pattern
+        return datePattern.test(str);
+    }
+
+    console.log(isDateLike('2020-01-01'))
+
     function convertToDate(obj){
         obj[datekey] = new Date(obj[datekey]);
         return obj;
     }
-
-    jsonarray = jsonarray.map(d => convertToDate(d))
+    console.log(jsonarray)
+    jsonarray = jsonarray.filter(d => isDateLike(d[datekey]));
+    jsonarray = jsonarray.map(d => convertToDate(d));
+    console.log(jsonarray);
 
     jsonarray.sort((a,b) => {
-        if(!isNaN(a[datekey]) && !isNaN(b[datekey])) return 0;
-        if(isNaN(a[datekey]) && !isNaN(b[datekey])) return 1; // b is null, a comes first 
-        if(isNaN(b[datekey]) && !isNaN(a[datekey])) return -1; // a is null, b comes first
         return a[datekey] - b[datekey];
     })
 
     //add total field
-    const totalnumber = jsonarray.length;
-    for(let i=0;i<totalnumber;i++){
+
+    for(let i=0;i<jsonarray.length;i++){
         if(i==0){
             jsonarray[i]['total'] = totalnumber;
     }else{
