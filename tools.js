@@ -13,16 +13,13 @@ function burndownPlot(jsonarray,datekey,divname){
         return datePattern.test(str);
     }
 
-    console.log(isDateLike('2020-01-01'))
-
     function convertToDate(obj){
         obj[datekey] = new Date(obj[datekey]);
         return obj;
     }
-    console.log(jsonarray)
+
     jsonarray = jsonarray.filter(d => isDateLike(d[datekey]));
     jsonarray = jsonarray.map(d => convertToDate(d));
-    console.log(jsonarray);
 
     jsonarray.sort((a,b) => {
         return a[datekey] - b[datekey];
@@ -131,6 +128,55 @@ function plotgannt(ganntarray,projarray,divid,startDate,endDate){
 
 };
 
+function barwalk(jsonarray){
+    //jsonarray is an array of objects with the following format:
+    // {"name":str,"value":float,"startvalue":bool}
+    let newarray = [];
+    let startob = jsonarray.filter(d => d['startvalue'] == true);
+    let deltaob = jsonarray.filter( d => d['startvalue'] == false);
+    if(startob.length != 1){
+        throw new Error('There should be exactly one start value');
+    }
+    newarray.push({'name':startob[0].name, 'bottom':0.0, 'top':startob[0].value,'end':startob[0].value});
+
+    for(let i=0;i<deltaob.length;i++){
+        if(deltaob[i].value < 0){
+            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'] + deltaob[i].value, 'top':newarray[i]['end'],'end':newarray[i]['end'] + deltaob[i].value});
+        }else if(deltaob[i].value > 0){
+            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'], 'top':newarray[i]['end'] + deltaob[i].value,'end':newarray[i]['end'] + deltaob[i].value});
+        }else{
+            throw new Error('The value should not be zero');
+        }    
+    }
+
+    return newarray;
+}
+
+function plotwalk(jsonarray,divid){
+    //function to plot a bar chart walk
+
+    let domainarray = [];
+    jsonarray.forEach(d =>{domainarray.push(d['name'])});
+
+    const walkplot = Plot.plot({
+        height:400,
+        width:800,
+        x:{
+            domain:domainarray
+        },
+        marks:[
+            Plot.barY(jsonarray,{
+                x:'name',
+                y1:'bottom',
+                y2:'top',
+                fill:"steelblue"
+            })
+        ] 
+    })
+    const walkdiv = document.getElementById(divid);
+    walkdiv.append(walkplot);
+}
 
 
-export {burndownPlot,plotgannt};
+
+export {burndownPlot,plotgannt,plotwalk,barwalk};

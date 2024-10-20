@@ -8,14 +8,27 @@
 <body>
     <h1>Burndown</h1>
     <div id="burndown"></div>
+    <h1>Bar Walk</h1>
+    <div id="barwalk"></div>
 </body>
 <script type="module">
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-    import {burndownPlot} from './tools.js';
+    import {burndownPlot,barwalk,plotwalk} from './tools.js';
 
     d3.csv('data.csv').then(data2 => {
         burndownPlot(data2,'date','burndown')
     })
+
+    let walkdata = [
+        {'name':'startpoint','value':100324,startvalue:true},
+        {'name':'reason 1','value':-32000,startvalue:false},
+        {'name':'reason 2','value':84000,startvalue:false}
+    ];
+
+    let newarray = barwalk(walkdata);
+    console.log(newarray)
+
+    plotwalk(newarray,'barwalk')
 
 
 
