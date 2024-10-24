@@ -137,13 +137,13 @@ function barwalk(jsonarray){
     if(startob.length != 1){
         throw new Error('There should be exactly one start value');
     }
-    newarray.push({'name':startob[0].name, 'bottom':0.0, 'top':startob[0].value,'end':startob[0].value});
+    newarray.push({'name':startob[0].name, 'bottom':0.0, 'top':startob[0].value,'end':startob[0].value,'value':startob[0].value});
 
     for(let i=0;i<deltaob.length;i++){
         if(deltaob[i].value < 0){
-            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'] + deltaob[i].value, 'top':newarray[i]['end'],'end':newarray[i]['end'] + deltaob[i].value});
+            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'] + deltaob[i].value, 'top':newarray[i]['end'],'end':newarray[i]['end'] + deltaob[i].value,'value':deltaob[i].value});
         }else if(deltaob[i].value > 0){
-            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'], 'top':newarray[i]['end'] + deltaob[i].value,'end':newarray[i]['end'] + deltaob[i].value});
+            newarray.push({'name':deltaob[i].name, 'bottom':newarray[i]['end'], 'top':newarray[i]['end'] + deltaob[i].value,'end':newarray[i]['end'] + deltaob[i].value,'value':deltaob[i].value});
         }else{
             throw new Error('The value should not be zero');
         }    
@@ -158,19 +158,29 @@ function plotwalk(jsonarray,divid){
     let domainarray = [];
     jsonarray.forEach(d =>{domainarray.push(d['name'])});
 
+    let positivearray = jsonarray.filter(d => d['value'] >= 0);
+    let negativearray = jsonarray.filter(d => d['value'] < 0);
+
     const walkplot = Plot.plot({
         height:400,
         width:800,
+        marginLeft:100,
         x:{
             domain:domainarray
         },
         marks:[
-            Plot.barY(jsonarray,{
+            Plot.ruleY([0]),
+            Plot.barY(positivearray,{
                 x:'name',
                 y1:'bottom',
                 y2:'top',
-                fill:"steelblue"
-            })
+                fill:"lightblue"
+            }),
+            Plot.barY(negativearray,{
+                x:'name',
+                y1:'top',
+                y2:'bottom',
+                fill:"lightcoral"})
         ] 
     })
     const walkdiv = document.getElementById(divid);
