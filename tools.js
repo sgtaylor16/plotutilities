@@ -48,6 +48,69 @@ function burndownPlot(jsonarray,datekey,divname){
 
 //function to make a quick timeline
 
+function plotschedule(ganntarray,startDate,endDate,divid){
+    //gantarray is a list of object with the following values:
+    // {"title":str,"minDate":date,"maxDate":date,"order":int}
+    // startDate and endDate are the start and end dates of the project as javascript dates
+    // divid is the id of the div where the plot will be placed
+
+        //Create the Schedule
+    //Derived from https://observablehq.com/@observablehq/build-your-own-gantt-chart
+
+    for(let i=0;i<ganntarray.length;i++){
+        ganntarray[i]['minDate'] = new Date(ganntarray[i]['startDate']);
+        ganntarray[i]['maxDate'] = new Date(ganntarray[i]['endDate']);
+    }
+
+    const bars = ganntarray.filter(d =>d.minDate.getTime() != d.maxDate.getTime());
+    const milestones = ganntarray.filter(d => d.minDate.getTime() == d.maxDate.getTime());
+
+    const yDomain = ganntarray.sort((a) => d3.ascending(a.order)).map(d => d.title);
+
+    const schedplot = Plot.plot({
+        height:400,
+        width:800,
+        marks:[
+            Plot.barX(bars,{
+                y:'title',
+                x1:"minDate",
+                x2:"maxDate",
+                fill:"steelblue"
+            }),
+            Plot.dot(milestones,{
+                y:'title',
+                x:'minDate',
+                r:10
+            }),
+            Plot.text(ganntarray,{
+                y:'title',
+                x:'minDate',
+                text:"title",
+                textAnchor:"start",
+                fontSize:12,
+                stroke:"white",
+                fill:"dimgray",
+                fontWeight:500
+            })
+        ],
+        x:{
+            grid:true,
+            domain:[startDate,endDate],
+            tickFormat:null,
+            tickSize:null
+        },
+        y:{
+            domain:yDomain,
+            label:null,
+            tickFormat:null,
+            tickSize:null
+        }  
+    });
+
+    const scheddiv = document.getElementById(divid);
+    scheddiv.append(schedplot);
+
+}
 
 function plotgannt(ganntarray,projarray,divid,startDate,endDate){
 
@@ -189,4 +252,4 @@ function plotwalk(jsonarray,divid){
 
 
 
-export {burndownPlot,plotgannt,plotwalk,barwalk};
+export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule};

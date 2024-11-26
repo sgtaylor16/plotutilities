@@ -10,10 +10,12 @@
     <div id="burndown"></div>
     <h1>Bar Walk</h1>
     <div id="barwalk"></div>
+    <h1>Schedule</h1>
+    <div id="schedule"></div>
 </body>
 <script type="module">
     import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-    import {burndownPlot,barwalk,plotwalk} from './tools.js';
+    import {burndownPlot,barwalk,plotwalk,plotschedule} from './tools.js';
 
     d3.csv('data.csv').then(data2 => {
         burndownPlot(data2,'date','burndown')
@@ -25,14 +27,13 @@
         {'name':'reason 2','value':84000,startvalue:false}
     ];
 
-    console.log(walkdata)
     let newarray = barwalk(walkdata);
-    console.log(newarray)
 
     plotwalk(newarray,'barwalk')
 
-
-
+    d3.json('scheduledata.json').then(data => {
+        plotschedule(data,new Date('12/1/2024'),new Date('6/1/2026'),'schedule')
+    })
 
 </script>
 </html>
