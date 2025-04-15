@@ -138,6 +138,9 @@ function plotgannt(ganntarray,projarray,divid,startDate,endDate){
     
     calcMaxMin(ganntarray,projarray);
 
+    //Create the Schedule
+    plotschedule(filteredArray,startDate,endDate,divid);
+
     const bars = ganntarray.filter(d.minDate.getTime() != d.maxDate.getTime());
     const milestones = ganntarray.filter(d.minDate.getTime() == d.maxDate.getTime());
 
@@ -250,6 +253,20 @@ function plotwalk(jsonarray,divid){
     walkdiv.append(walkplot);
 }
 
+function obToArr(obarray,keylist){
+    //obarray is an array of objects
+    //keylist is a list of keys
+    //returns an array of arrays
+    let newarray = [];
+    for(let i=0;i<obarray.length;i++){
+        let temparray = [];
+        for(let j=0;j<keylist.length;j++){
+            temparray.push(obarray[i][keylist[j]]);
+        }
+        newarray.push(temparray);
+    }
+    return newarray;
+}
 
 
-export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule};
+export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr};
