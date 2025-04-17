@@ -1,5 +1,6 @@
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import {tricontour} from "https://cdn.skypack.dev/d3-tricontour@1";
 
 
 function burndownPlot(jsonarray,datekey,divname){
@@ -268,5 +269,43 @@ function obToArr(obarray,keylist){
     return newarray;
 }
 
+function unstructuredPlot(data,valuerange,svgtag,thresholds=10){
+    ///data is an array of arrays. The the first column should be x, second column shouold be y, and the third column the value you wish to plot on mesh.
+    ///valuerange is a two element array with the min and max values you wish on the color scale.
+    ///svgtag is the id of the svg tag where the plot will be placed
+    ///thresholds is the number of levels you wish to plot. Default is 10.
 
-export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr};
+    const svg = d3.select(svgtag);
+    const margin = {left:10,right:10,top:10,bottom:10};
+    const svg_height = svg.attr('height')
+    const svg_width = svg.attr('width')
+
+    let xscale = d3.scaleLinear().domain(d3.extent(data,d => d[0])).range([margin.left,svg_width - margin.right]);
+    let yscale = d3.scaleLinear().domain(d3.extent(data,d => d[1])).range([svg_height-margin.top,margin.bottom])
+    let cscale = d3.scaleSequential(d3.interpolateTurbo).domain(valuerange)
+
+    let toScreen = ({type,value,coordinates}) => {  //Feeds a single Countour object
+        return {type,value,coordinates: coordinates.map(rings =>{ //Feeds a single ring (there may be more than one)
+            return rings.map(points => {
+                return points.map(([x,y]) => ([
+                    xscale(x),yscale(y)
+                ]))
+            })
+        })}
+    }
+
+    levels = linspace(valuerange[0],valuerange[1],thresholds)
+
+    let contours = d3.tricontour().thresholds(levels)(data).map(toScreen)
+
+    const path = d3.geoPath()
+
+    svg.selectAll("path")
+    .data(contours)
+    .join("path")
+    .attr("d",path)
+    .attr("fill",d => cscale(d.value))
+    .attr("stroke",'black')
+}
+
+export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr,unstructuredPlot};

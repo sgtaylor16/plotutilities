@@ -12,9 +12,9 @@ function unstructured(data,valuerange,svgtag,levels=8){
     //
 
     const svg = d3.select(svgtag);
+    const margin = {top:10,right:10,bottom:10,left:10};
     const svg_width = +svg.attr('width');
     const svg_height = +svg.attr('height');
-    const margin = {top:10,right:10,bottom:10,left:10};
 
     const xscale = d3.scaleLinear().domain(d3.extent(data,d => d[0])).range([margin.left,svg_width - margin.right]);
     const yscale = d3.scaleLinear().domain(d3.extent(data,d => d[1])).range([svg_height - margin.bottom,margin.top]);
@@ -32,3 +32,4 @@ function unstructured(data,valuerange,svgtag,levels=8){
     .attr("stroke","black")
 
 }
+
