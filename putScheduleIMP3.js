@@ -296,23 +296,6 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
     }
 //#endregion
 }
-var alldata, mymilestones, mytasks
-
-function makeIMP(filepath,svgid,CAfilter,yaxis = false){
-
-    //d3 read in file
-
-    d3.csv(filepath,sched_access)
-
-    .then(function(data){
-        alldata = data; //puts the data in global scope
-
-        //filter only on the accounts that are in CAfilter
-
-        mytasks = accountsFilter(alldata,CAfilter);
-        putAccounts(svgid,mytasks,yaxis)
-    })
-}
 
 function makeIMP2(data,svgid,CAfilter,yaxis = false,schedstart,schedend){
     /*Creates a schedule on the webpage with the svgid
