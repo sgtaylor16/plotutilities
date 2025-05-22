@@ -297,7 +297,7 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
 //#endregion
 }
 
-function makeIMP2(data,svgid,CAfilter,yaxis = false,schedstart,schedend){
+function makeIMP(data,svgid,CAfilter,yaxis = false,schedstart,schedend){
     /*Creates a schedule on the webpage with the svgid
     data - json object that contains the data
     svgid - id of the svg element
@@ -317,4 +317,4 @@ function makeIMP2(data,svgid,CAfilter,yaxis = false,schedstart,schedend){
     }
 
 
-export {makeIMP2,sched_access,putAccounts};
+export {makeIMP,sched_access,putAccounts};
