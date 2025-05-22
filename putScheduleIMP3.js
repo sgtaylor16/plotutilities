@@ -7,14 +7,6 @@ function sched_access({Index,Name,Start,Finish,Account,complete}){
     return ({Index:Index, Name:Name , Start: new Date(Start) , Finish:new Date(Finish) , Account: Account,complete: complete});
 }
 
-function checkforMilestones(object){
-    if(object.Account == 'Milestones'){
-        return true;
-    }else{
-        return false;
-    }
-}
-
 function checkforZeroDuration(object){
     if(object.Start.toDateString() == object.Finish.toDateString()){
         return true;
@@ -82,11 +74,10 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
     let tasks = dataarray.filter(checkforTasks);
 
     //find the unique control accounts
-    uniqueCAs = findAccounts(dataarray);
+    let uniqueCAs = findAccounts(dataarray);
 
     //Get the height of the svg element
 
-    let height = document.getElementById(svgid.slice(1)).getAttribute("height");
     let width = document.getElementById(svgid.slice(1)).getAttribute("width");
     let margin = 100;
     let topProtection = 50;
@@ -95,7 +86,7 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
     let fontsize = 14;
     var labelfontsize = 14;
 
-    newheight = uniqueCAs.length * (barheight + 10) + axisheight + topProtection;
+    let newheight = uniqueCAs.length * (barheight + 10) + axisheight + topProtection;
     document.getElementById(svgid.slice(1)).setAttribute("height",newheight);
 
 //#region Scales
