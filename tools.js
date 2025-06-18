@@ -308,4 +308,27 @@ function unstructuredPlot(data,valuerange,svgtag,thresholds=10){
     .attr("stroke",'black')
 }
 
-export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr,unstructuredPlot};
+function groupUnstack(data,key1,key2,reducer){
+    //Function to take tidy data and group it by a key, then unstack it using D3
+    console.log(reducer)
+
+    let groupedData = d3.rollup(data,reducer,(d) => d[key1],(d) => d[key2]);
+
+    let uniqueKey1 = Array.from(new Set(data.map(d => d[key1]))).sort((a,b) => a-b);
+    let uniqueKey2 = Array.from(new Set(data.map(d => d[key2]))).sort((a,b) => a-b);
+
+    let outArray = [];
+    uniqueKey1.forEach(k1 => {
+        uniqueKey2.forEach(k2 => {
+            try{
+                let summedValue = groupedData.get(k1).get(k2);
+                outArray.push({key1:k1, key2:k2,value:summedValue});
+            }
+            catch (e){
+                //pass (do nothing)
+            }
+        })
+    })
+    return outArray;
+}
+export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr,unstructuredPlot,groupUnstack};
