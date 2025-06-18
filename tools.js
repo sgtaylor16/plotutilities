@@ -331,4 +331,36 @@ function groupUnstack(data,key1,key2,reducer){
     })
     return outArray;
 }
-export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr,unstructuredPlot,groupUnstack};
+
+function stackedPrep(data,xkey,ykey,sumkey){
+    //Function to prepare data for stacked bar chart
+    //data is an array of objects is expected to be in a tidy format
+    //xkey is the key for the x-axis
+    //ykey is the key for the values that will be stacked
+    //sumkey is the key for the values that will be summed
+    //returns an object with two keys: outArray is the data that can be provided to d3's stack function
+    //keys is the unique values of the ykey that will be used to create the stacked plot
+
+    let uniqueXkey = Array.from(new Set(data.map(d => d[xkey]))).sort((a,b) => a-b);
+    let uniqueYkey = Array.from(new Set(data.map(d => d[ykey]))).sort((a,b) => a-b);
+
+    let groupedData = d3.rollup(data,(v) => d3.sum(v,(d) => d[sumkey]),(d) => d[xkey],(d) => d[ykey]);
+
+    let outArray = [];
+    uniqueXkey.forEach(x => {
+        let tempmap = groupedData.get(x);
+        let tempob = {};
+        tempob[xkey] = x;
+        uniqueYkey.forEach(y => {
+            if(tempmap.has(y)){
+                tempob[y] = tempmap.get(y);
+            }else{
+                tempob[y] = 0;
+            }
+        })
+        outArray.push(tempob);
+    })
+
+    return {outArray:outArray,keys:uniqueYkey};
+}
+export {burndownPlot,plotgannt,plotwalk,barwalk,plotschedule,obToArr,unstructuredPlot,groupUnstack,stackedPrep};
