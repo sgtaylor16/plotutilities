@@ -50,6 +50,16 @@ function filterOnOneAccount(Account,task){
 
 }
 
+function daysBetween(date1, date2) {
+    // Get the time difference in milliseconds
+    const timeDifference = Math.abs(date2.getTime() - date1.getTime());
+    
+    // Convert milliseconds to days (1000ms * 60s * 60min * 24hr = 86400000ms per day)
+    const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    
+    return daysDifference;
+}
+
 function accountsFilter(data,AccountFilter){
 
     let outputarray = [];
@@ -86,6 +96,7 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
     let fontsize = 14;
     var labelfontsize = 14;
 
+    //Set the height of the svg element based on the number of unique control accounts
     let newheight = uniqueCAs.length * (barheight + 10) + axisheight + topProtection;
     document.getElementById(svgid.slice(1)).setAttribute("height",newheight);
 
@@ -109,11 +120,9 @@ function putAccounts(svgid,dataarray,yaxis,schedStart,schedEnd){
                         .range(d3.schemePastel1);
 
     function colorScale2(basefunc,CA,test){
-        console.log(typeof(test))
         if(test){
             return "lightgrey"
         }else{
-            // console.log("In HEre")
             return basefunc(CA)
         }
     }
